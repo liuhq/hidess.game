@@ -1,0 +1,40 @@
+{
+  "name": "hidess",
+  "version": "1",
+  "private": true,
+  "scripts": {
+    "serve:dev": "pnpm -F server dev",
+    "serve:build": "pnpm -F server build",
+    "serve:start": "pnpm -F server start",
+    "web:dev": "pnpm -F web dev",
+    "web:build": "pnpm -F web build",
+    "web:preview": "pnpm -F web preview",
+    "fmt:check": "dprint check",
+    "fmt": "dprint fmt",
+    "lint": "pnpm -F server lint && pnpm -F web lint",
+    "lint:fix": "pnpm -F server lint:fix && pnpm -F web lint:fix",
+    "test": "vitest run"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lightningcss",
+      "unrs-resolver",
+      "@swc/core",
+      "dprint"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tsconfig/node-ts": "^23.6.4",
+    "@types/node": "^25.6.0",
+    "dprint": "^0.53.2",
+    "eslint": "^10.2.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.58.2",
+    "vitest": "^4.1.4"
+  },
+  "dependencies": {
+    "valibot": "^1.3.1"
+  }
+}

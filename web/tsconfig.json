@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "@tsconfig/vite-react/tsconfig.json", // https://www.npmjs.com/package/@tsconfig/vite-react
+    "../tsconfig.base.json"
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#/*": ["./src/*"],
+      "@hidess/shared": ["../shared/src/index.ts"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "vite.config.ts",
+    "orval.config.ts",
+    "eslint.config.js",
+    "lingui.config.js"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "incremental": true,
+  "lineWidth": 80,
+  "useTabs": false,
+  "indentWidth": 2,
+  "newLineKind": "lf",
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+    "**/pnpm-lock.yaml",
+    "**/yarn.lock",
+    "**/routeTree.gen.ts"
+  ],
+  "typescript": {
+    "lineWidth": 80,
+    "useTabs": false,
+    "indentWidth": 2,
+    "newLineKind": "lf",
+    "semiColons": "asi",
+    "quoteStyle": "preferDouble",
+    "arrowFunction.useParentheses": "force",
+    "associations": ["**/*.ts", "**/*.tsx"]
+  },
+  "json": {
+    "lineWidth": 80,
+    "useTabs": false,
+    "indentWidth": 2,
+    "newLineKind": "lf"
+  },
+  "markdown": {
+    "lineWidth": 80,
+    "newLineKind": "lf",
+    "textWrap": "always"
+  },
+  "malva": {
+    "printWidth": 80,
+    "useTabs": false,
+    "indentWidth": 2,
+    "lineBreak": "lf",
+    "hexCase": "lower",
+    "hexColorLength": "long",
+    "quotes": "preferDouble",
+    "declarationOrder": "concentric"
+  },
+  "markup": {
+    "printWidth": 80,
+    "useTabs": false,
+    "indentWidth": 2,
+    "lineBreak": "lf"
+  },
+  "classnameWrap": {
+    "lineWidth": 80,
+    "lineWidthIncludesIndent": true,
+    "associations": ["**/*.tsx"]
+  },
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.95.15.wasm",
+    "https://plugins.dprint.dev/json-0.21.3.wasm",
+    "https://plugins.dprint.dev/markdown-0.21.1.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.15.2.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.0.wasm",
+    "https://plugins.dprint.dev/liuhq/classname-wrap-0.1.3.wasm"
+  ]
+}

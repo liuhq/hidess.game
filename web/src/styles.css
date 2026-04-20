@@ -1,0 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* Colorscheme */
+  --color-*: initial;
+  --color-base: var(--base);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-square-primary: var(--square-primary);
+  --color-square-secondary: var(--square-secondary);
+  --color-border: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-piece: var(--piece);
+  --color-piece-self: var(--piece-self);
+  --color-piece-enemy: var(--piece-enemy);
+  /* Sizing */
+  --spacing-square-size: var(--square-size);
+  --spacing-piece-size: var(--piece-size);
+  --spacing-board-w: var(--board-w);
+  --spacing-board-h: var(--board-h);
+  --spacing-square-gap: var(--square-gap);
+}
+
+@layer base {
+  :root {
+    /* Colorscheme */
+    --base: #f2f4f8;
+    --surface: #ffffff;
+    --accent: #88c0d0;
+    --square-primary: #d8dee9;
+    --square-secondary: #eceff4;
+    --border: #4c566a;
+    --text-primary: #2e3440;
+    --text-secondary: #434c5e;
+    --piece: #5e81ac;
+    --piece-self: #a3be8c;
+    --piece-enemy: #bf616a;
+    /* Base settings */
+    --count-col: 8;
+    --count-row: 4;
+    --square-size: 48px;
+    --square-gap: 2px;
+    --piece-scale: 0.88;
+    /* Derivations */
+    --grid-count-col: repeat(var(--count-col), minmax(0, 1fr));
+    --grid-count-row: repeat(var(--count-row), minmax(0, 1fr));
+    --piece-size: calc(var(--square-size) * var(--piece-scale));
+    --piece-gap: calc(var(--square-size) * (1 - var(--piece-scale)) / 2);
+    --board-w: calc(
+      var(--square-size) * var(--count-col) +
+        var(--square-gap) * (var(--count-col) - 1)
+    );
+    --board-h: calc(
+      var(--square-size) * var(--count-row) +
+        var(--square-gap) * (var(--count-row) - 1)
+    );
+  }
+}
+
+@utility piece-col-* {
+  --local-piece-col: --value(integer);
+  left: calc(
+    var(--piece-gap) + var(--square-size) * var(--local-piece-col) +
+      var(--square-gap) * var(--local-piece-col)
+  );
+}
+
+@utility piece-row-* {
+  --local-piece-row: --value(integer);
+  top: calc(
+    var(--piece-gap) + var(--square-size) * var(--local-piece-row) +
+      var(--square-gap) * var(--local-piece-row)
+  );
+}
