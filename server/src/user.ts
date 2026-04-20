@@ -6,7 +6,7 @@ export const UserId = v.pipe(
   v.string(),
   v.minLength(2, "Must be 2 or more characters long."),
   v.regex(
-    /^[a-zA-Z][a-zA-Z0-9_\-]+$/,
+    /^[a-zA-Z][a-zA-Z0-9_-]+$/,
     "Must start with a letter and contain only letters, numbers, underscores, or hyphens (>= 2 characters).",
   ),
 )

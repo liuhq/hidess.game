@@ -66,7 +66,7 @@ room
       const param = c.req.valid("param")
 
       return c.json<v.InferOutput<typeof Room.GetInfo.response>>({
-        player: ["alex", "bob", "hacker_1997"],
+        player: [param.rid, "alex", "bob", "hacker_1997"],
       })
     },
   )

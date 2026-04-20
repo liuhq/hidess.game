@@ -1,4 +1,5 @@
-import * as eslint from '@eslint/js'
+// @ts-ignore
+import eslint from '@eslint/js'
 import {defineConfig} from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
