@@ -1,6 +1,8 @@
 import { nanoid } from "nanoid"
 import * as v from "valibot"
 
+export { v }
+
 export const ErrorResponse = v.pipe(
   v.object({
     status: v.number(),

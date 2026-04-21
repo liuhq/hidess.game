@@ -1,8 +1,8 @@
+import { upgradeWebSocket } from "#/app"
+import { NanoId } from "#/utils"
 import { type Context, Hono } from "hono"
 import { describeRoute, validator } from "hono-openapi"
 import * as v from "valibot"
-import { upgradeWebSocket } from "./app"
-import { NanoId } from "./utils"
 
 const GameSchema = v.pipe(
   v.object({
@@ -30,7 +30,7 @@ game.get(
     },
   }),
   upgradeWebSocket((
-    c: Context<{}, "/game/:id", {
+    c: Context<object, "/game/:id", {
       in: { param: GameInput }
       out: { param: GameOutput }
     }>,
@@ -38,13 +38,15 @@ game.get(
     const param = c.req.valid("param")
 
     return {
+      onOpen: (evt, ws) => {},
       onMessage: (evt, ws) => {
         console.log(`Message from client: ${evt.data}`)
         ws.send(`Start ${param.gid} in ${param.rid}!`)
       },
-      onClose: () => {
+      onClose: (evt, ws) => {
         console.log("Connection closed")
       },
+      onError: (evt, ws) => {},
     }
   }),
 )

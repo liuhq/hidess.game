@@ -1,23 +1,24 @@
+import { UserId } from "#/api/user"
+import { ErrorResponse, NanoId } from "#/utils"
 import { Hono } from "hono"
 import { describeRoute, resolver, validator } from "hono-openapi"
 import * as v from "valibot"
 import { game } from "./game"
-import { UserId } from "./user"
-import { ErrorResponse, NanoId } from "./utils"
+import { ROOM_STORE, RoomInfo } from "./store"
 
 const Room = {
-  GetInfo: {
+  Param: {
     request: v.pipe(
       v.object({
         rid: NanoId,
       }),
     ),
-    response: v.pipe(
+    response: RoomInfo,
+  } as const,
+  Query: {
+    request: v.pipe(
       v.object({
-        player: v.pipe(
-          v.array(UserId),
-          v.minLength(1),
-        ),
+        uid: UserId,
       }),
     ),
   } as const,
@@ -61,14 +62,17 @@ room
         },
       },
     }),
-    validator("param", Room.GetInfo.request),
+    validator("param", Room.Param.request),
     (c) => {
       const param = c.req.valid("param")
 
-      return c.json<v.InferOutput<typeof Room.GetInfo.response>>({
-        player: [param.rid, "alex", "bob", "hacker_1997"],
+      return c.json<v.InferOutput<typeof Room.Param.response>>({
+        players: [param.rid, "alex", "bob", "hacker_1997"],
+        gaming: [],
+        history: [],
       })
     },
   )
+  .post()
 
 export { room }
