@@ -1,8 +1,8 @@
 import { Piece, Vec2 } from "../piece"
-import type { Action, PieceRule } from "../rule"
+import type { _Action, PieceRule } from "../rule"
 
-const soldierRule: PieceRule = (state, piece): Action[] => {
-  const actions: Action[] = []
+const soldierRule: PieceRule = (state, piece): _Action[] => {
+  const actions: _Action[] = []
 
   const [x, y] = piece.position
 

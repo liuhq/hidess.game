@@ -3,7 +3,7 @@ import { ErrorResponse, NanoId } from "#/utils"
 import { Hono } from "hono"
 import { describeRoute, resolver, validator } from "hono-openapi"
 import * as v from "valibot"
-import { game } from "./game"
+import { game } from "../game"
 import { ROOM_STORE, RoomInfo } from "./store"
 
 const Room = {

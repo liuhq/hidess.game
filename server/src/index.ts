@@ -1,26 +1,32 @@
-import { app, injectWebSocket } from "#/app"
-import { serve } from "@hono/node-server"
+import { swaggerUI } from "@hono/swagger-ui"
+import { openAPIRouteHandler } from "hono-openapi"
+import { api } from "./api"
+import { app } from "./app"
 import { DEV_PORT } from "./constants"
+import { runServer } from "./server"
+import { ws } from "./ws"
 
-const server = serve({
-  fetch: app.fetch,
-  port: DEV_PORT,
-}, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
-})
+app
+  .route("/", ws)
+  .route("/", api)
+  .get(
+    "/openapi.json",
+    openAPIRouteHandler(app, {
+      documentation: {
+        info: {
+          title: "Hidess API",
+          version: "0.0.1",
+          description: "Server API",
+        },
+        servers: [
+          {
+            url: `http://localhost:${DEV_PORT}`,
+            description: "Development Server (Local)",
+          },
+        ],
+      },
+    }),
+  )
+  .get("/doc", swaggerUI({ url: "/openapi.json" }))
 
-injectWebSocket(server)
-
-process.on("SIGINT", () => {
-  server.close()
-  process.exit(0)
-})
-process.on("SIGTERM", () => {
-  server.close((err) => {
-    if (err) {
-      console.error(err)
-      process.exit(1)
-    }
-    process.exit(0)
-  })
-})
+runServer(app)

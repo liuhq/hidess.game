@@ -1,11 +1,10 @@
-import { room } from "#/api/room"
-import { user } from "#/api/user"
-import { API_VERSION } from "#/constants"
 import { Hono } from "hono"
+import { game } from "./game"
+import { user } from "./user"
 
-const api = new Hono().basePath(`/api/${API_VERSION}`)
+const api = new Hono()
 api
   .route("/", user)
-  .route("/", room)
+  .route("/", game)
 
 export { api }

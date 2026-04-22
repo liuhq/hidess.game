@@ -1,14 +1,33 @@
+import * as v from "valibot"
 import { type GameState, Side } from "./game"
 import { Piece, PieceKind, PieceState, Vec2 } from "./piece"
 import hiddenRule from "./rules/hidden"
 import soldierRule from "./rules/soldier"
 
-export type Action =
+export const Action = v.variant("type", [
+  v.object({
+    type: v.literal("reveal"),
+    pid: v.string(),
+  }),
+  v.object({
+    type: v.literal("move"),
+    pid: v.string(),
+    to: v.strictTuple([v.number(), v.number()]),
+  }),
+  v.object({
+    type: v.literal("capture"),
+    pid: v.string(),
+    targetPid: v.string(),
+    to: v.strictTuple([v.number(), v.number()]),
+  }),
+])
+
+export type _Action =
   | { type: "reveal"; pid: string }
   | { type: "move"; pid: string; to: Vec2 }
   | { type: "capture"; pid: string; targetPid: string; to: Vec2 }
 
-export type PieceRule = (state: GameState, piece: Piece) => Action[]
+export type PieceRule = (state: GameState, piece: Piece) => _Action[]
 
 const pieceRules: Record<
   PieceKind | typeof PieceState.Hidden,
@@ -18,7 +37,7 @@ const pieceRules: Record<
   Soldier: soldierRule,
 }
 
-const getValidActions = (state: GameState, pid: string): Action[] => {
+const getValidActions = (state: GameState, pid: string): _Action[] => {
   const piece = state.pieces.find((p) => p.pid === pid)
 
   if (!piece) return []
@@ -28,7 +47,7 @@ const getValidActions = (state: GameState, pid: string): Action[] => {
   return rule(state, piece)
 }
 
-const applyAction = (state: GameState, action: Action): GameState => {
+const applyAction = (state: GameState, action: _Action): GameState => {
   switch (action.type) {
     case "reveal": {
       return {

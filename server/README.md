@@ -20,47 +20,34 @@ pnpm dev
 ### Resources
 
 ```
-RoomInfo (rid)
-├── users: Set<uid>
-└── games: Map<gid, GameInfo>
-
 GameInfo (gid)
 ├── players: { Side: uid }
 ├── status: 'playing' | 'finished'
 └── result: GameResult
 
 User (uid)
-├── currentRid?: rid
 └── currentGid?: gid
 ```
 
 ### RESTAPI
 
-#### room
+#### user
 
-| Method | Route         | Description          | Body | Return     |
-| ------ | ------------- | -------------------- | ---- | ---------- |
-| POST   | `/rooms`      | Create a new room    |      | `rid`      |
-| GET    | `/rooms/:rid` | Get room information |      | `RoomInfo` |
-| DELETE | `/rooms/:rid` | Delete room          |      |            |
+| Method | Route        | Description             | Body       | Return     |
+| ------ | ------------ | ----------------------- | ---------- | ---------- |
+| GET    | `/user/:uid` | Get user information    |            | `UserInfo` |
+| POST   | `/user`      | Create a new user       | `{ uid }`  |            |
+| PUT    | `/user/:uid` | Update user information | `UserInfo` | `UserInfo` |
+| DELETE | `/user/:uid` | Delete user             |            |            |
 
-#### room <-> user
+#### game
 
-| Method | Route                    | Description      | Body      | Return           |
-| ------ | ------------------------ | ---------------- | --------- | ---------------- |
-| GET    | `/rooms/:rid/users`      | Get users list   |           | `RoomInfo.users` |
-| POST   | `/rooms/:rid/users`      | User joins room  | `{ uid }` |                  |
-| DELETE | `/rooms/:rid/users/:uid` | User leaves room |           |                  |
-
-#### room <-> game
-
-| Method | Route                    | Description              | Body          | Return           |
-| ------ | ------------------------ | ------------------------ | ------------- | ---------------- |
-| GET    | `/rooms/:rid/games`      | Get games list in room   |               | `RoomInfo.games` |
-| GET    | `/rooms/:rid/games/:gid` | Get game information     |               | `GameInfo`       |
-| POST   | `/rooms/:rid/games`      | Create a new game        | `{ players }` | `gid`            |
-| PATCH  | `/rooms/:rid/games/:gid` | Update the gaming status | `{ status }`  |                  |
-|        |                          |                          |               |                  |
+| Method | Route                | Description                   | Body          | Return       |
+| ------ | -------------------- | ----------------------------- | ------------- | ------------ |
+| GET    | `/game/:gid`         | Get game information          |               | `GameInfo`   |
+| GET    | `/game?uid={UserId}` | Get game history about a user |               | `[GameInfo]` |
+| POST   | `/game`              | Create a new game             | `{ players }` | `gid`        |
+| PATCH  | `/game/:gid`         | Update the gaming status      | `{ status }`  |              |
 
 ### WebSocket
 
@@ -79,22 +66,14 @@ interface WsMessage {
 
 #### Server to Client
 
-**room**
-
-| Type                 | When             | Payload                    |
-| -------------------- | ---------------- | -------------------------- |
-| `room:user_joined`   | User joined room | `{ rid, uid }`             |
-| `room:user_left`     | User left room   | `{ rid, uid }`             |
-| `room:game_created`  | New game created | `{ rid, gid, players }`    |
-| `room:game_finished` | Game finished    | `{ rid, gid, GameResult }` |
-
 **game**
 
-| Type         | When              | Payload                          |
-| ------------ | ----------------- | -------------------------------- |
-| `game:start` | Game start        | `{ gid, players, initialState }` |
-| `game:state` | Update game state | `{ gid, state }`                 |
-| `game:end`   | Game end          | `{ gid, GameResult }`            |
+| Type           | When              | Payload                 |
+| -------------- | ----------------- | ----------------------- |
+| `game:created` | New game created  | `{ gid, players }`      |
+| `game:start`   | Game start        | `{ gid, initialState }` |
+| `game:state`   | Update game state | `{ gid, state }`        |
+| `game:end`     | Game end          | `{ gid, GameResult }`   |
 
 #### Client to Server
 
