@@ -1,24 +1,24 @@
-import type { UserId } from "#/api/user"
+import type { VUserId } from "#/schema"
 import type { WSContext } from "hono/ws"
 
 export type WsConn = WSContext<WebSocket>
 
-export function createUserWsMap(initMap?: Map<UserId, WsConn>) {
-  const map = new Map<UserId, WsConn>(initMap)
+export function createUserWsMap(initMap?: Map<VUserId, WsConn>) {
+  const map = new Map<VUserId, WsConn>(initMap)
 
   return {
     get map() {
-      return map as ReadonlyMap<UserId, WsConn>
+      return map as ReadonlyMap<VUserId, WsConn>
     },
-    connect: (uid: UserId, ws: WsConn) => {
+    connect: (uid: VUserId, ws: WsConn) => {
       const oldWs = map.get(uid)
       oldWs?.close()
       map.set(uid, ws)
     },
-    disconnect: (uid: UserId) => {
+    disconnect: (uid: VUserId) => {
       map.delete(uid)
     },
-    ws: (uid: UserId) => {
+    ws: (uid: VUserId) => {
       const ws = map.get(uid)
       if (!ws) {
         return { ws: null, error: new Error(`WebSocket not found: ${uid}`) }

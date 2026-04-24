@@ -33,21 +33,21 @@ User (uid)
 
 #### user
 
-| Method | Route        | Description             | Body       | Return     |
-| ------ | ------------ | ----------------------- | ---------- | ---------- |
-| GET    | `/user/:uid` | Get user information    |            | `UserInfo` |
-| POST   | `/user`      | Create a new user       | `{ uid }`  |            |
-| PUT    | `/user/:uid` | Update user information | `UserInfo` | `UserInfo` |
-| DELETE | `/user/:uid` | Delete user             |            |            |
+| Method | Route        | Description             | Body                               | Return     |
+| ------ | ------------ | ----------------------- | ---------------------------------- | ---------- |
+| GET    | `/user/:uid` | Get user information    |                                    | `UserInfo` |
+| POST   | `/user`      | Create a new user       | `{ uid }`                          |            |
+| PATCH  | `/user/:uid` | Update user information | `{ status, current_gid, history }` | `UserInfo` |
+| DELETE | `/user/:uid` | Delete user             |                                    |            |
 
 #### game
 
-| Method | Route                | Description                   | Body          | Return       |
-| ------ | -------------------- | ----------------------------- | ------------- | ------------ |
-| GET    | `/game/:gid`         | Get game information          |               | `GameInfo`   |
-| GET    | `/game?uid={UserId}` | Get game history about a user |               | `[GameInfo]` |
-| POST   | `/game`              | Create a new game             | `{ players }` | `gid`        |
-| PATCH  | `/game/:gid`         | Update the gaming status      | `{ status }`  |              |
+| Method | Route                | Description             | Body                | Return       |
+| ------ | -------------------- | ----------------------- | ------------------- | ------------ |
+| GET    | `/game/:gid`         | Get game information    |                     | `GameInfo`   |
+| GET    | `/game?uid={UserId}` | Get user's game history |                     | `[GameInfo]` |
+| POST   | `/game`              | Create a new game       | `{ players }`       | `gid`        |
+| PATCH  | `/game/:gid`         | Update game status      | `{ status, steps }` |              |
 
 ### WebSocket
 

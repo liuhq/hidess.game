@@ -1,5 +1,5 @@
 import { UserId } from "#/api/user"
-import { ErrorResponse, NanoId } from "#/utils"
+import { VErrorResponse, VNanoId } from "#/utils"
 import { Hono } from "hono"
 import { describeRoute, resolver, validator } from "hono-openapi"
 import * as v from "valibot"
@@ -10,7 +10,7 @@ const Room = {
   Param: {
     request: v.pipe(
       v.object({
-        rid: NanoId,
+        rid: VNanoId,
       }),
     ),
     response: RoomInfo,
@@ -58,7 +58,7 @@ room
         },
         400: {
           description: "Invalid room RID",
-          content: { "application/json": { schema: resolver(ErrorResponse) } },
+          content: { "application/json": { schema: resolver(VErrorResponse) } },
         },
       },
     }),

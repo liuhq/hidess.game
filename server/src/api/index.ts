@@ -4,7 +4,7 @@ import { user } from "./user"
 
 const api = new Hono()
 api
-  .route("/", user)
   .route("/", game)
+  .route("/", user)
 
 export { api }

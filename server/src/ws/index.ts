@@ -1,5 +1,4 @@
-import { UserId } from "#/api/user"
-import { v } from "#/utils"
+import { v, VUserId } from "#/schema"
 import { type Context, Hono } from "hono"
 import { describeRoute, validator } from "hono-openapi"
 import { upgradeWebSocket } from "../app"
@@ -8,7 +7,7 @@ import { USER_WS } from "./store"
 const ws = new Hono().basePath("/ws")
 
 const WsQuerySchema = v.object({
-  uid: UserId,
+  uid: VUserId,
 })
 
 type WsQueryInput = v.InferInput<typeof WsQuerySchema>
@@ -18,7 +17,7 @@ ws.get(
   "/",
   describeRoute({
     description: "WebSocket connected when UID login",
-    tags: ["user"],
+    tags: ["WebSocket"],
     operationId: "webSocketByUid",
     responses: {
       101: {

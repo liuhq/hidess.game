@@ -1,11 +1,11 @@
 import { UserId } from "#/api/user"
-import { NanoId } from "#/utils"
+import { VNanoId } from "#/utils"
 import type { WsConn } from "#/ws"
 import type { Side } from "@hidess/shared"
 import * as v from "valibot"
 
 export interface Gaming {
-  gid: NanoId
+  gid: VNanoId
   players: {
     [s in Side]: {
       uid: UserId
@@ -20,15 +20,15 @@ export const RoomInfo = v.pipe(
       v.array(UserId),
       v.minLength(1),
     ),
-    gaming: v.array(NanoId),
-    history: v.array(NanoId),
+    gaming: v.array(VNanoId),
+    history: v.array(VNanoId),
   }),
 )
 
 export type RoomInfo = v.InferInput<typeof RoomInfo>
 
-export type GameMap = Map<NanoId, Gaming>
-export type RoomMap = Map<NanoId, GameMap>
+export type GameMap = Map<VNanoId, Gaming>
+export type RoomMap = Map<VNanoId, GameMap>
 
 export const GAME_STORE: GameMap = new Map()
 export const ROOM_STORE: RoomMap = new Map()
