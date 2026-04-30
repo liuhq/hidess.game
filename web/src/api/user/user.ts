@@ -7,9 +7,23 @@
  */
 import useSwr from 'swr';
 import type {
+  Arguments,
   Key,
   SWRConfiguration
 } from 'swr';
+
+import useSWRMutation from 'swr/mutation';
+import type {
+  SWRMutationConfiguration
+} from 'swr/mutation';
+
+import type {
+  ErrorResponse,
+  GetApiUserByUid200,
+  PatchApiUserByUid200,
+  PatchApiUserByUidBody,
+  PostApiUserBody
+} from '../model';
 
 
 
@@ -21,7 +35,7 @@ import type {
 
 
 /**
- * Get user Information via UID
+ * Get user information
  */
 export const getGetApiUserByUidUrl = (uid: string,) => {
 
@@ -31,7 +45,7 @@ export const getGetApiUserByUidUrl = (uid: string,) => {
   return `/api/user/${uid}`
 }
 
-export const getApiUserByUid = async (uid: string, options?: RequestInit): Promise<string> => {
+export const getApiUserByUid = async (uid: string, options?: RequestInit): Promise<GetApiUserByUid200> => {
 
   const res = await fetch(getGetApiUserByUidUrl(uid),
   {
@@ -44,7 +58,7 @@ export const getApiUserByUid = async (uid: string, options?: RequestInit): Promi
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: string = body ? JSON.parse(body) : {}
+  const data: GetApiUserByUid200 = body ? JSON.parse(body) : {}
   return data
 }
 
@@ -55,7 +69,7 @@ export const getGetApiUserByUidKey = (uid: string,) => [`/api/user/${uid}`] as c
 
 export type GetApiUserByUidQueryResult = NonNullable<Awaited<ReturnType<typeof getApiUserByUid>>>
 
-export const useGetApiUserByUid = <TError = Promise<unknown>>(
+export const useGetApiUserByUid = <TError = Promise<ErrorResponse>>(
   uid: string, options?: { swr?:SWRConfiguration<Awaited<ReturnType<typeof getApiUserByUid>>, TError> & { swrKey?: Key, enabled?: boolean }, fetch?: RequestInit }
 ) => {
   const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
@@ -65,6 +79,177 @@ export const useGetApiUserByUid = <TError = Promise<unknown>>(
   const swrFn = () => getApiUserByUid(uid, fetchOptions)
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+/**
+ * Update user information
+ */
+export const getPatchApiUserByUidUrl = (uid: string,) => {
+
+
+
+
+  return `/api/user/${uid}`
+}
+
+export const patchApiUserByUid = async (uid: string,
+    patchApiUserByUidBody: PatchApiUserByUidBody, options?: RequestInit): Promise<PatchApiUserByUid200> => {
+
+  const res = await fetch(getPatchApiUserByUidUrl(uid),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      patchApiUserByUidBody,)
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: PatchApiUserByUid200 = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+export const getPatchApiUserByUidMutationFetcher = (uid: string, options?: RequestInit) => {
+  return (_: Key, { arg }: { arg: PatchApiUserByUidBody }) => {
+    return patchApiUserByUid(uid, arg, options);
+  }
+}
+export const getPatchApiUserByUidMutationKey = (uid: string,) => [`/api/user/${uid}`] as const;
+
+export type PatchApiUserByUidMutationResult = NonNullable<Awaited<ReturnType<typeof patchApiUserByUid>>>
+
+export const usePatchApiUserByUid = <TError = Promise<void | ErrorResponse>>(
+  uid: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof patchApiUserByUid>>, TError, Key, PatchApiUserByUidBody, Awaited<ReturnType<typeof patchApiUserByUid>>> & { swrKey?: string }, fetch?: RequestInit}
+) => {
+
+  const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getPatchApiUserByUidMutationKey(uid);
+  const swrFn = getPatchApiUserByUidMutationFetcher(uid, fetchOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+/**
+ * Delete user
+ */
+export const getDeleteApiUserByUidUrl = (uid: string,) => {
+
+
+
+
+  return `/api/user/${uid}`
+}
+
+export const deleteApiUserByUid = async (uid: string, options?: RequestInit): Promise<void> => {
+
+  const res = await fetch(getDeleteApiUserByUidUrl(uid),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: void = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+export const getDeleteApiUserByUidMutationFetcher = (uid: string, options?: RequestInit) => {
+  return (_: Key, __: { arg: Arguments }) => {
+    return deleteApiUserByUid(uid, options);
+  }
+}
+export const getDeleteApiUserByUidMutationKey = (uid: string,) => [`/api/user/${uid}`] as const;
+
+export type DeleteApiUserByUidMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiUserByUid>>>
+
+export const useDeleteApiUserByUid = <TError = Promise<ErrorResponse>>(
+  uid: string, options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof deleteApiUserByUid>>, TError, Key, Arguments, Awaited<ReturnType<typeof deleteApiUserByUid>>> & { swrKey?: string }, fetch?: RequestInit}
+) => {
+
+  const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getDeleteApiUserByUidMutationKey(uid);
+  const swrFn = getDeleteApiUserByUidMutationFetcher(uid, fetchOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
+
+  return {
+    swrKey,
+    ...query
+  }
+}
+/**
+ * Create a new user
+ */
+export const getPostApiUserUrl = () => {
+
+
+
+
+  return `/api/user`
+}
+
+export const postApiUser = async (postApiUserBody: PostApiUserBody, options?: RequestInit): Promise<void> => {
+
+  const res = await fetch(getPostApiUserUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      postApiUserBody,)
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: void = body ? JSON.parse(body) : {}
+  return data
+}
+
+
+
+
+export const getPostApiUserMutationFetcher = ( options?: RequestInit) => {
+  return (_: Key, { arg }: { arg: PostApiUserBody }) => {
+    return postApiUser(arg, options);
+  }
+}
+export const getPostApiUserMutationKey = () => [`/api/user`] as const;
+
+export type PostApiUserMutationResult = NonNullable<Awaited<ReturnType<typeof postApiUser>>>
+
+export const usePostApiUser = <TError = Promise<unknown>>(
+   options?: { swr?:SWRMutationConfiguration<Awaited<ReturnType<typeof postApiUser>>, TError, Key, PostApiUserBody, Awaited<ReturnType<typeof postApiUser>>> & { swrKey?: string }, fetch?: RequestInit}
+) => {
+
+  const {swr: swrOptions, fetch: fetchOptions} = options ?? {}
+
+  const swrKey = swrOptions?.swrKey ?? getPostApiUserMutationKey();
+  const swrFn = getPostApiUserMutationFetcher(fetchOptions);
+
+  const query = useSWRMutation(swrKey, swrFn, swrOptions)
 
   return {
     swrKey,

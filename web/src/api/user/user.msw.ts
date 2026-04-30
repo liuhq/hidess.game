@@ -17,22 +17,63 @@ import type {
   RequestHandlerOptions
 } from 'msw';
 
+import type {
+  GetApiUserByUid200,
+  PatchApiUserByUid200
+} from '../model';
 
-export const getGetApiUserByUidResponseMock = (): string => (faker.word.sample())
+
+export const getGetApiUserByUidResponseMock = (overrideResponse: Partial<Extract<GetApiUserByUid200, object>> = {}): GetApiUserByUid200 => ({data: {uid: faker.helpers.fromRegExp("^[a-zA-Z][a-zA-Z0-9_-]+$"), status: faker.helpers.arrayElement([]), current_gid: faker.helpers.arrayElement([faker.helpers.fromRegExp("^[\\w-]+$"), undefined]), history: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({gid: faker.helpers.fromRegExp("^[\\w-]+$"), players: {Red: faker.helpers.fromRegExp("^[a-zA-Z][a-zA-Z0-9_-]+$"), Black: faker.helpers.fromRegExp("^[a-zA-Z][a-zA-Z0-9_-]+$")}, status: faker.helpers.arrayElement([]), steps: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => (faker.helpers.arrayElement([{type: {}, pid: faker.string.alpha({length: {min: 10, max: 20}})},{type: {}, pid: faker.string.alpha({length: {min: 10, max: 20}}), to: Array.from({ length: faker.number.int({min: 2, max: 10}) }, (_, i) => i + 1).map(() => ({}))},{type: {}, pid: faker.string.alpha({length: {min: 10, max: 20}}), targetPid: faker.string.alpha({length: {min: 10, max: 20}}), to: Array.from({ length: faker.number.int({min: 2, max: 10}) }, (_, i) => i + 1).map(() => ({}))},])))}))}, ...overrideResponse})
+
+export const getPatchApiUserByUidResponseMock = (overrideResponse: Partial<Extract<PatchApiUserByUid200, object>> = {}): PatchApiUserByUid200 => ({data: {uid: faker.helpers.fromRegExp("^[a-zA-Z][a-zA-Z0-9_-]+$"), status: faker.helpers.arrayElement([]), current_gid: faker.helpers.arrayElement([faker.helpers.fromRegExp("^[\\w-]+$"), undefined]), history: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({gid: faker.helpers.fromRegExp("^[\\w-]+$"), players: {Red: faker.helpers.fromRegExp("^[a-zA-Z][a-zA-Z0-9_-]+$"), Black: faker.helpers.fromRegExp("^[a-zA-Z][a-zA-Z0-9_-]+$")}, status: faker.helpers.arrayElement([]), steps: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => (faker.helpers.arrayElement([{type: {}, pid: faker.string.alpha({length: {min: 10, max: 20}})},{type: {}, pid: faker.string.alpha({length: {min: 10, max: 20}}), to: Array.from({ length: faker.number.int({min: 2, max: 10}) }, (_, i) => i + 1).map(() => ({}))},{type: {}, pid: faker.string.alpha({length: {min: 10, max: 20}}), targetPid: faker.string.alpha({length: {min: 10, max: 20}}), to: Array.from({ length: faker.number.int({min: 2, max: 10}) }, (_, i) => i + 1).map(() => ({}))},])))}))}, ...overrideResponse})
 
 
-export const getGetApiUserByUidMockHandler = (overrideResponse?: string | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<string> | string), options?: RequestHandlerOptions) => {
+export const getGetApiUserByUidMockHandler = (overrideResponse?: GetApiUserByUid200 | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GetApiUserByUid200> | GetApiUserByUid200), options?: RequestHandlerOptions) => {
   return http.get('*/api/user/:uid', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
-  const resolvedBody = overrideResponse !== undefined
+
+    return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getGetApiUserByUidResponseMock();
-    const textBody = typeof resolvedBody === 'string' ? resolvedBody : JSON.stringify(resolvedBody ?? null);
-    return HttpResponse.text(textBody,
+    : getGetApiUserByUidResponseMock(),
       { status: 200
       })
   }, options)
 }
+
+export const getPatchApiUserByUidMockHandler = (overrideResponse?: PatchApiUserByUid200 | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<PatchApiUserByUid200> | PatchApiUserByUid200), options?: RequestHandlerOptions) => {
+  return http.patch('*/api/user/:uid', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPatchApiUserByUidResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getDeleteApiUserByUidMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/api/user/:uid', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
+export const getPostApiUserMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.post('*/api/user', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getUserMock = () => [
-  getGetApiUserByUidMockHandler()
+  getGetApiUserByUidMockHandler(),
+  getPatchApiUserByUidMockHandler(),
+  getDeleteApiUserByUidMockHandler(),
+  getPostApiUserMockHandler()
 ]

@@ -9,16 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StartRouteImport } from './routes/start'
 import { Route as GoRouteImport } from './routes/go'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as signSignupRouteImport } from './routes/(sign)/signup'
+import { Route as signSigninRouteImport } from './routes/(sign)/signin'
 
-const StartRoute = StartRouteImport.update({
-  id: '/start',
-  path: '/start',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GoRoute = GoRouteImport.update({
   id: '/go',
   path: '/go',
@@ -34,50 +30,57 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const signSignupRoute = signSignupRouteImport.update({
+  id: '/(sign)/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const signSigninRoute = signSigninRouteImport.update({
+  id: '/(sign)/signin',
+  path: '/signin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/go': typeof GoRoute
-  '/start': typeof StartRoute
+  '/signin': typeof signSigninRoute
+  '/signup': typeof signSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/go': typeof GoRoute
-  '/start': typeof StartRoute
+  '/signin': typeof signSigninRoute
+  '/signup': typeof signSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/go': typeof GoRoute
-  '/start': typeof StartRoute
+  '/(sign)/signin': typeof signSigninRoute
+  '/(sign)/signup': typeof signSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/go' | '/start'
+  fullPaths: '/' | '/about' | '/go' | '/signin' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/go' | '/start'
-  id: '__root__' | '/' | '/about' | '/go' | '/start'
+  to: '/' | '/about' | '/go' | '/signin' | '/signup'
+  id: '__root__' | '/' | '/about' | '/go' | '/(sign)/signin' | '/(sign)/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   GoRoute: typeof GoRoute
-  StartRoute: typeof StartRoute
+  signSigninRoute: typeof signSigninRoute
+  signSignupRoute: typeof signSignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/start': {
-      id: '/start'
-      path: '/start'
-      fullPath: '/start'
-      preLoaderRoute: typeof StartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/go': {
       id: '/go'
       path: '/go'
@@ -99,6 +102,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(sign)/signup': {
+      id: '/(sign)/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof signSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(sign)/signin': {
+      id: '/(sign)/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof signSigninRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,7 +123,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   GoRoute: GoRoute,
-  StartRoute: StartRoute,
+  signSigninRoute: signSigninRoute,
+  signSignupRoute: signSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

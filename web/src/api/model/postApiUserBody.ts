@@ -6,6 +6,10 @@
  * OpenAPI spec version: 0.0.1
  */
 
-export type GetApiRoomByRid200 = {
-  player: string[];
+export type PostApiUserBody = {
+  /**
+     * @minLength 2
+     * @pattern ^[a-zA-Z][a-zA-Z0-9_-]+$
+     */
+  uid: string;
 };

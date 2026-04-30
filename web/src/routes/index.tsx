@@ -1,21 +1,19 @@
-import { useGetApiRoomByRid } from "#/api/room/room"
 import { createFileRoute } from "@tanstack/react-router"
 import useSWRSubscription, {
   type SWRSubscriptionOptions,
 } from "swr/subscription"
 
-const rid = "room123456"
 const gid = "abcdef1234"
 
 const App = () => {
-  const { data, error, isLoading } = useGetApiRoomByRid(rid)
-  const { data: wsData, error: wsError } = useSWRSubscription(
-    () => `/ws/${rid}/game/${gid}`,
+  const uid = "alex"
+  const { data, error } = useSWRSubscription(
+    () => `/ws?uid=${uid}`,
     (key, { next }: SWRSubscriptionOptions<string, Error>) => {
       const socket = new WebSocket(key)
       socket.addEventListener(
         "open",
-        () => socket.send(`[client] ${rid}/${gid}`),
+        () => socket.send(`[client] ${uid}/${gid}`),
       )
       socket.addEventListener("message", (evt) => next(null, evt.data))
       socket.addEventListener(
@@ -26,13 +24,16 @@ const App = () => {
     },
   )
 
-  if (error || wsError) return <div>failed to load</div>
-  if (isLoading || !wsData) return <div>loading...</div>
+  if (error) {
+    return <div>failed to load</div>
+  }
+  if (!data) {
+    return <div>loading...</div>
+  }
 
   return (
     <main className="">
-      <div>{data?.player.join("++")}</div>
-      <div>{wsData}</div>
+      <div>{data}</div>
     </main>
   )
 }

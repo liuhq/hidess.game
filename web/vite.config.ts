@@ -14,7 +14,7 @@ const config = defineConfig({
       "/ws": {
         target: "ws://localhost:5876",
         ws: true,
-        rewrite: (p) => p.replace(/^\/ws/, "/api/room"),
+        rewriteWsOrigin: true,
       },
     },
   },
