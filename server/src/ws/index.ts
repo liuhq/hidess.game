@@ -37,6 +37,7 @@ ws.get(
     return {
       onOpen: (evt, ws) => {
         USER_WS.connect(uid, ws)
+        ws.send(`Hello, ${uid}!`)
       },
       onClose: (evt, ws) => {
         USER_WS.disconnect(uid)

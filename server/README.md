@@ -1,5 +1,14 @@
 # Hidess Server
 
+## Development
+
+### Env
+
+- `BETTER_AUTH_SECRET`: Arbitrary key, used for encrypting auth database during
+  local development.
+- `BETTER_AUTH_URL`: Same as server, default: `http://localhost:5876`
+- `BETTER_AUTH_API_KEY`: `better-auth` dashboard api key
+
 ## Local API Document
 
 Follow the steps, then open: http://localhost:5876/doc

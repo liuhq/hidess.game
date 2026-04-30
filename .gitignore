@@ -1,5 +1,7 @@
-# cache
+# dev
 web/.tanstack
+**/*.db
+**/*.sqlite
 
 # deps
 **/node_modules
