@@ -1,115 +1,103 @@
-import { v, VErrorResponse } from "#/schema"
+import { db } from "#/db"
+import { v, VErrorResponse, VUserId } from "#/schema"
 import { Hono } from "hono"
 import { describeRoute, resolver, validator } from "hono-openapi"
-import { VUserDelete, VUserGet, VUserPatch, VUserPost } from "./schema"
+import { VUserGet, VUserPatch } from "./schema"
+import { createUserStore, type createUserStore as CreateUserStore } from "./store"
 
-const user = new Hono().basePath("/user")
+export function createUserRoutes(
+  store: ReturnType<typeof CreateUserStore>,
+) {
+  const user = new Hono().basePath("/user")
 
-user.get(
-  "/:uid",
-  describeRoute({
-    description: "Get user information",
-    tags: ["User"],
-    responses: {
-      200: {
-        description: "User information",
-        content: {
-          "application/json": {
-            schema: resolver(VUserGet.ParamByUid.Response),
+  user.get(
+    "/:uid",
+    describeRoute({
+      description: "Get user information",
+      tags: ["User"],
+      responses: {
+        200: {
+          description: "User information",
+          content: {
+            "application/json": {
+              schema: resolver(VUserGet.ParamByUid.Response),
+            },
+          },
+        },
+        400: {
+          description: "Invalid UID",
+          content: { "application/json": { schema: resolver(VErrorResponse) } },
+        },
+      },
+    }),
+    validator("param", VUserGet.ParamByUid.Param),
+    (c) => {
+      const { uid } = c.req.valid("param")
+
+      let info = store.get(uid)
+      if (!info) {
+        info = store.create(uid)
+      }
+
+      return c.json<v.InferOutput<typeof VUserGet.ParamByUid.Response>>({
+        data: info,
+      })
+    },
+  )
+
+  user.patch(
+    "/:uid",
+    describeRoute({
+      description: "Update user information",
+      tags: ["User"],
+      responses: {
+        200: {
+          description: "Updated information",
+          content: {
+            "application/json": {
+              schema: resolver(VUserPatch.ParamByUid.Response),
+            },
+          },
+        },
+        304: {
+          description: "No update required",
+        },
+        400: {
+          description: "Update failed",
+          content: {
+            "application/json": { schema: resolver(VErrorResponse) },
           },
         },
       },
-      400: {
-        description: "Invalid UID",
-        content: { "application/json": { schema: resolver(VErrorResponse) } },
-      },
+    }),
+    validator("param", VUserPatch.ParamByUid.Param),
+    validator("json", VUserPatch.ParamByUid.Body),
+    (c) => {
+      const { uid } = c.req.valid("param")
+      const body = c.req.valid("json")
+
+      const { info: updated, changed } = store.update(uid, body)
+      if (!updated) {
+        return c.json<VErrorResponse>(
+          { status: 400, message: `User not found: ${uid}` },
+          400,
+        )
+      }
+      if (!changed) {
+        return c.body(null, 304)
+      }
+
+      return c.json<v.InferOutput<typeof VUserPatch.ParamByUid.Response>>({
+        data: updated,
+      })
     },
-  }),
-  validator("param", VUserGet.ParamByUid.Param),
-  (c) => {
-    const param = c.req.valid("param")
+  )
 
-    return c.json<v.InferOutput<typeof VUserGet.ParamByUid.Response>>({
-      data: {},
-    })
-  },
-)
+  return user
+}
 
-user.post(
-  "/",
-  describeRoute({
-    description: "Create a new user",
-    tags: ["User"],
-    responses: {
-      204: {
-        description: "Create successful",
-      },
-    },
-  }),
-  validator("json", VUserPost.Body),
-  (c) => {
-    const body = c.req.valid("json")
-
-    return c.body(null, 204)
-  },
-)
-
-user.patch(
-  "/:uid",
-  describeRoute({
-    description: "Update user information	",
-    tags: ["User"],
-    responses: {
-      200: {
-        description: "Updated information",
-        content: {
-          "application/json": {
-            schema: resolver(VUserPatch.ParamByUid.Response),
-          },
-        },
-      },
-      304: {
-        description: "No update required",
-      },
-      400: {
-        description: "Update failed",
-        content: { "application/json": { schema: resolver(VErrorResponse) } },
-      },
-    },
-  }),
-  validator("param", VUserPatch.ParamByUid.Param),
-  validator("json", VUserPatch.ParamByUid.Body),
-  (c) => {
-    const param = c.req.valid("param")
-    const body = c.req.valid("json")
-
-    return c.json<v.InferOutput<typeof VUserPatch.ParamByUid.Response>>({
-      data: {},
-    })
-  },
-)
-
-user.delete(
-  "/:uid",
-  describeRoute({
-    description: "Delete user",
-    tags: ["User"],
-    responses: {
-      204: {
-        description: "Delete successful",
-      },
-      400: {
-        description: "Delete failed",
-        content: { "application/json": { schema: resolver(VErrorResponse) } },
-      },
-    },
-  }),
-  validator("param", VUserDelete.ParamByUid.Param),
-  (c) => {
-    const param = c.req.valid("param")
-
-    return c.body(null, 204)
-  },
-)
+const store = createUserStore(db)
+const user = createUserRoutes(store)
 
 export { user }
+export { VUserId as UserId }

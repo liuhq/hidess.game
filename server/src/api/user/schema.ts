@@ -23,26 +23,12 @@ export const VUserGet = {
   } as const,
 } as const
 
-export const VUserPost = {
-  Body: v.object({
-    uid: VUserId,
-  }),
-} as const
-
 export const VUserPatch = {
   ParamByUid: {
     Param: v.object({
       uid: VUserId,
     }),
-    Body: v.pick(VUserInfo, ["status", "current_gid", "history"]),
+    Body: v.partial(v.pick(VUserInfo, ["status", "current_gid", "history"])),
     Response: VResponseWrap_(VUserInfo),
-  } as const,
-} as const
-
-export const VUserDelete = {
-  ParamByUid: {
-    Param: v.object({
-      uid: VUserId,
-    }),
   } as const,
 } as const
