@@ -1,8 +1,8 @@
-import { DEV_DB, DEV_PORT } from "#/constants"
+import { db } from "#/db"
+import { DEV_PORT } from "#/constants"
 import { dash } from "@better-auth/infra"
 import { betterAuth } from "better-auth"
 import { getMigrations } from "better-auth/db/migration"
-import Database from "better-sqlite3"
 
 export const auth = betterAuth({
   appName: "Hidess Game",
@@ -11,7 +11,7 @@ export const auth = betterAuth({
     "https://reshoot-catching-elude.ngrok-free.dev",
   ],
   baseURL: `http://localhost:${DEV_PORT}`,
-  database: new Database(DEV_DB),
+  database: db,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
