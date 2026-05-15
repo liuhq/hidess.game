@@ -1,6 +1,7 @@
 import type Database from "better-sqlite3"
 import type { VNanoId, VUserId } from "#/schema"
-import type { VGameInfo, VUserInfo, VUserStatus } from "./schema"
+import type { VGameInfo } from "../game/schema"
+import type { VUserInfo, VUserStatus } from "./schema"
 
 interface UserProfileRow {
   uid: VUserId
@@ -68,13 +69,12 @@ export function createUserStore(db: Database) {
         sets.push("status = ?")
         values.push(patch.status)
       }
-      if (
-        "current_gid" in patch
-        && patch.current_gid !== undefined
-        && patch.current_gid !== existing.current_gid
-      ) {
-        sets.push("current_gid = ?")
-        values.push(patch.current_gid ?? null)
+      if ("current_gid" in patch) {
+        const dbValue = patch.current_gid ?? null
+        if (dbValue !== existing.current_gid) {
+          sets.push("current_gid = ?")
+          values.push(dbValue)
+        }
       }
       if (
         "history" in patch

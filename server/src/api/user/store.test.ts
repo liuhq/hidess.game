@@ -77,6 +77,15 @@ describe("createUserStore", () => {
       expect(info!.current_gid).toBe("abc1234567")
     })
 
+    it("clears current_gid when set to undefined", () => {
+      const store = createUserStore(makeDb())
+      store.create("alice")
+      store.update("alice", { current_gid: "abc1234567" })
+
+      const { info } = store.update("alice", { current_gid: undefined })
+      expect(info!.current_gid).toBeUndefined()
+    })
+
     it("updates history", () => {
       const store = createUserStore(makeDb())
       store.create("alice")
