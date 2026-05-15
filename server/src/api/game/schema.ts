@@ -45,6 +45,6 @@ export const VGamePatch = {
     Param: v.object({
       gid: VNanoId,
     }),
-    Body: v.pick(VGameInfo, ["status", "steps"]),
+    Body: v.partial(v.pick(VGameInfo, ["status", "steps"])),
   } as const,
 } as const
