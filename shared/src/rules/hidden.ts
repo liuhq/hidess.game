@@ -1,6 +1,6 @@
-import type { _Action, PieceRule } from "../rule"
+import type { Action, PieceRule } from "../rule"
 
-const hiddenRule: PieceRule = (_state, piece): _Action[] => {
+const hiddenRule: PieceRule = (_state, piece): Action[] => {
   return [{ type: "reveal", pid: piece.pid }]
 }
 

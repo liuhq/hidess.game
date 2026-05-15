@@ -1,7 +1,13 @@
 import * as v from "valibot"
-import { type GameState, Side } from "./game"
+import { type GameState, hashState, Side } from "./game"
 import { Piece, PieceKind, PieceState, Vec2 } from "./piece"
+import advisorRule from "./rules/advisor"
+import cannonRule from "./rules/cannon"
+import chariotRule from "./rules/chariot"
+import elephantRule from "./rules/elephant"
+import generalRule from "./rules/general"
 import hiddenRule from "./rules/hidden"
+import horseRule from "./rules/horse"
 import soldierRule from "./rules/soldier"
 
 export const Action = v.variant("type", [
@@ -22,22 +28,25 @@ export const Action = v.variant("type", [
   }),
 ])
 
-export type _Action =
-  | { type: "reveal"; pid: string }
-  | { type: "move"; pid: string; to: Vec2 }
-  | { type: "capture"; pid: string; targetPid: string; to: Vec2 }
+export type Action = v.InferOutput<typeof Action>
 
-export type PieceRule = (state: GameState, piece: Piece) => _Action[]
+export type PieceRule = (state: GameState, piece: Piece) => Action[]
 
 const pieceRules: Record<
   PieceKind | typeof PieceState.Hidden,
   PieceRule
 > = {
   Hidden: hiddenRule,
+  General: generalRule,
+  Advisor: advisorRule,
+  Elephant: elephantRule,
+  Chariot: chariotRule,
+  Horse: horseRule,
+  Cannon: cannonRule,
   Soldier: soldierRule,
 }
 
-const getValidActions = (state: GameState, pid: string): _Action[] => {
+const getValidActions = (state: GameState, pid: string): Action[] => {
   const piece = state.pieces.find((p) => p.pid === pid)
 
   if (!piece) return []
@@ -47,7 +56,7 @@ const getValidActions = (state: GameState, pid: string): _Action[] => {
   return rule(state, piece)
 }
 
-const applyAction = (state: GameState, action: _Action): GameState => {
+const applyAction = (state: GameState, action: Action): GameState => {
   switch (action.type) {
     case "reveal": {
       return {
@@ -98,9 +107,7 @@ const resolveSquareClick = (
 ): GameState => {
   const clickPiece = Piece.getPieceAt(state.pieces, clickPos)
 
-  // 未选中
   if (!state.selectedPid) {
-    // 翻开暗棋
     if (clickPiece && clickPiece.state === PieceState.Hidden) {
       const actions = getValidActions(state, clickPiece.pid)
       const action = actions.find((a) => a.type === "reveal")
@@ -112,7 +119,6 @@ const resolveSquareClick = (
       return applyAction(state, action)
     }
 
-    // 只能选中当前回合己方棋子
     if (clickPiece && clickPiece.side === state.turn) {
       return { ...state, selectedPid: clickPiece.pid }
     }
@@ -125,12 +131,10 @@ const resolveSquareClick = (
     return { ...state, selectedPid: null }
   }
 
-  // 点击自己：取消选中
   if (Vec2.eq(selectedPiece.position, clickPos)) {
     return { ...state, selectedPid: null }
   }
 
-  // 点击己方其它棋子：切换选中
   if (clickPiece && clickPiece.side === selectedPiece.side) {
     return { ...state, selectedPid: clickPiece.pid }
   }
@@ -148,7 +152,18 @@ const resolveSquareClick = (
   return applyAction(state, action)
 }
 
+const isStalemate = (history: string[]) => {
+  if (history.length < 3) return false
+  const current = history[history.length - 1]!
+  let count = 0
+  for (const h of history) {
+    if (h === current) count++
+  }
+  return count >= 3
+}
+
 export const Rule = {
   getValidActions,
   resolveSquareClick,
+  isStalemate,
 } as const
